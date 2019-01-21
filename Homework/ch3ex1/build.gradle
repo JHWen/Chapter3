@@ -20,7 +20,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "com.airbnb.android:lottie:2.7.0"
 
-    // TODO 1: 添加对 lottie android 库的依赖. 注意版本使用 2.7.0
+    // 添加对 lottie android 库的依赖. 注意版本使用 2.7.0
     // lottie Android 官网：https://airbnb.io/lottie/android/android.html
 }
