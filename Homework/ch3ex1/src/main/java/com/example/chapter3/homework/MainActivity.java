@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     // 当选中自动播放的时候，开始播放 lottie 动画，同时禁止手动修改进度
-                    animationView.playAnimation();
+                    // animationView.playAnimation();
+                    // 使用resumeAnimation()恢复动画，从当前progress开始，动画的连贯性效果较好
+                    animationView.resumeAnimation();
                     seekBar.setEnabled(false);
                 } else {
                     // 当去除自动播放时，停止播放 lottie 动画，同时允许手动修改进度
