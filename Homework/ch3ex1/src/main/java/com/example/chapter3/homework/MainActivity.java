@@ -1,17 +1,29 @@
 package com.example.chapter3.homework;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
+import android.graphics.drawable.AnimatedImageDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 
 public class MainActivity extends AppCompatActivity {
     private LottieAnimationView animationView;
-    private CheckBox loopCheckBox;
     private SeekBar seekBar;
+    private CheckBox checkboxPlay;
+    private CheckBox checkboxCycle;
+    //动画执行过程中改变seekBar状态，seekBar不会反过去修改动画的进度
+    private boolean isSeekBarEnable;
+
+    private static final String TAG = "wenjiahao";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,25 +31,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         animationView = findViewById(R.id.animation_view);
-        loopCheckBox = findViewById(R.id.loop_checkbox);
         seekBar = findViewById(R.id.seekbar);
+        checkboxPlay = findViewById(R.id.checkbox_play);
+        checkboxCycle = findViewById(R.id.checkbox_cycle_arrow);
+        isSeekBarEnable = true;
 
-        loopCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // 当选中自动播放的时候，开始播放 lottie 动画，同时禁止手动修改进度
-                    // animationView.playAnimation();
-                    // 使用resumeAnimation()恢复动画，从当前progress开始，动画的连贯性效果较好
-                    animationView.resumeAnimation();
-                    seekBar.setEnabled(false);
-                } else {
-                    // 当去除自动播放时，停止播放 lottie 动画，同时允许手动修改进度
-                    animationView.pauseAnimation();
-                    seekBar.setEnabled(true);
-                }
-            }
-        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -47,7 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 // 提示2：SeekBar 的文档可以把鼠标放在 OnProgressChanged 中间，并点击 F1 查看，
                 // 或者到官网查询 https://developer.android.com/reference/android/widget/SeekBar.OnSeekBarChangeListener.html#onProgressChanged(android.widget.SeekBar,%20int,%20boolean)
                 // 设置动画进度 浮点数
-                animationView.setProgress(progress / 100.0f);
+                if (isSeekBarEnable) {
+                    animationView.setProgress(progress / 100.0f);
+                }
             }
 
             @Override
@@ -58,5 +58,66 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
+        animationView.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                Log.d(TAG, "onAnimationStart");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.d(TAG, "onAnimationEnd");
+                //动画结束，播放按钮变成停止
+                checkboxPlay.setChecked(false);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                Log.d(TAG, "onAnimationCancel");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.d(TAG, "onAnimationCancel");
+            }
+        });
+
+        animationView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //动画播放时，更新进度条进度
+                Log.d(TAG, "onAnimationUpdate: " + animation.getAnimatedFraction());
+                seekBar.setProgress((int) (animation.getAnimatedFraction() * 100));
+            }
+        });
+
+        checkboxPlay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    animationView.resumeAnimation();
+                    isSeekBarEnable = false;
+                } else {
+                    animationView.pauseAnimation();
+                    isSeekBarEnable = true;
+                }
+            }
+        });
+
+        checkboxCycle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    //设置循环播放动画
+                    animationView.setRepeatCount(LottieDrawable.INFINITE);
+                } else {
+                    //取消循环播放动画
+                    animationView.setRepeatCount(0);
+                }
+            }
+        });
+
+
     }
 }

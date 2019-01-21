@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         app:lottie_autoPlay="false"
-        app:lottie_loop="true"
+        app:lottie_loop="false"
         app:lottie_rawRes="@raw/material_wave_loading"
         app:lottie_repeatMode="restart" />
 
@@ -24,7 +24,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="15dp"
         android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/checkbox_play"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/selector_bg_play"
+            android:button="@null" />
 
         <SeekBar
             android:id="@+id/seekbar"
@@ -36,10 +46,13 @@
             android:progress="50" />
 
         <CheckBox
-            android:id="@+id/loop_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:id="@+id/checkbox_cycle_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/selector_bg_cycle"
+            android:button="@null" />
     </LinearLayout>
 
 </FrameLayout>
